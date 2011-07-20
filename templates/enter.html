@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Вход | YouTube Uploader | sibinformburo (c) 2011 | ivank.in</title>
+<style type="text/css">
+html, body {
+	font-size: 14px;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+#table-center {
+	height: 100%;
+	width: 100%;
+}
+
+#form-auth {
+	margin-bottom: 0px;
+	margin-top: 0px;
+	margin-right: auto;
+	margin-left: auto;
+	height: 100px;
+	width: 330px;
+}
+
+#form-auth table td {
+	padding: 5px;
+}
+
+#form-auth input {
+	background-color: white;
+	border-color: #cccccc;
+	border-style: solid;
+	border-width: 1px;
+	padding: 5px;
+	display: block;
+	margin: 0 auto;
+}
+</style>
+
+</head>
+<body>
+<table id="table-center">
+<tr><td>
+    <form id="form-auth" action="" method="POST">{% csrf_token %}
+    <table >
+    	{{ authform.as_table }}
+    	<input type="hidden" name="formname" value="auth">
+    </table>
+    	<input type="submit" value="Вход">
+    </form>
+</td></tr>
+</table>
+</body>
+</html>
+	

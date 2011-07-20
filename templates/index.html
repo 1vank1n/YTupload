@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>YouTube Uploader | sibinformburo (c) 2011 | ivank.in</title>
+	
+	<script type="text/javascript" src="/media/jquery-1.6.1.min.js"></script>
+	<script type="text/javascript">
+        $(function(){
+            $('#choose_file a').click(function(){
+                $('#file_properties').fadeIn();
+                $('input[name="filename"]').attr('value', $(this).text());
+                $('input[name="filesize"]').attr('value', $(this).next('span').text());
+            });
+        });
+	</script>
+	<style type="text/css">
+	   body {width:1000px;margin:0 auto;position: relative;font-size:11pt;}
+	   #file_properties {display: none;}
+	   #choose_file {width: 490px; float: left; height: 500px; overflow-y: auto;}
+	   #loglist, #loglist table {width: 500px; float:right;}
+	   #loglist td {border: 1px solid #555;margin: 0;padding: 5px;}
+	   #exit {display: block; position: absolute; top:0; right:0; padding: 10px; background: #ddf; color: #000; text-decoration: none;}
+	   input, textarea, button {border: 1px solid #ccc; padding:5px;}
+	</style>
+</head>
+<body>
+    <a id="exit" href="/exit/">Выход</a>
+    <div id="loglist">
+        <h1>Отчёт</h1>
+        <table cellpadding="0" cellspacing="0">
+            <tr>
+                <td>Имя файла</td>
+                <td>Размер</td>
+                <td>Статус</td>
+            </tr>
+        {% for l in loglist %}
+            <tr>
+                <td>{{ l.filename }}</td>
+                <td>{{ l.filesize }}</td>
+                <td>{{ l.status }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div id="choose_file">
+	   <h1>1. Выберите файл:</h1>
+	   <p>Используйте в имени файла только латинские буквы, без пробелов и всяких там символов (+,-,%,',",^,&)!!!</p>
+	   {% for d in dictdir %}
+	   <li>{% if not d.status %}<a value="{{ d.filename }}" href="#">{% endif %}{{ d.filename }}</a> | <span>{{ d.filesize|filesizeformat }}</span></li>
+	   {% endfor %}
+	</div>
+	<div style="height:10px;width:100%;clear:both;"></div>
+	<div id="file_properties">
+	      <h1>2. Описание файла:</h1>
+	      <table>
+	      <form method="post" name="uploadform">
+	      <tr><td>Файл:</td><td><input type="text" name="filename" readonly /> <input type="text" name="filesize" hidden></td></tr>
+	      <tr><td>Название:</td><td><input type="text" name="title" /></td></tr>
+	      <tr><td>Описание:</td><td><textarea name="description"></textarea></td></tr>
+	      <!-- <tr><td>Категория:</td><td><select></select></td></tr> -->
+	      <tr><td>Ключевые слова:</td><td><input type="text" name="keywords" /></td></tr>
+	      <tr><td></td><td><input type="submit" value="3. Загрузить на YouTube" /></td></tr>
+	      </table>
+	      </form>
+    </div>
+</body>
+</html>
