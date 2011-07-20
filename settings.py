@@ -69,6 +69,12 @@ INSTALLED_APPS = (
     'control',
 )
 
+# YTupload settings
+ENCODE_DIR_FROM = rel('encode_from')
+ENCODE_DIR_TO = rel('encode_to')
+YT_LOGIN = ''
+YT_PASSWORD = ''
+
 try:
     from local_settings import *
 except ImportError:
