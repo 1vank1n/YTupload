@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 
+def rel(*x):
+    return os.path.join(os.path.abspath(os.path.dirname(__file__)), *x)
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -10,16 +13,10 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-ROOT = '/Users/lukas/workspace/utube'
-
 DATABASES = {
     'default': {
-        'ENGINE': 'sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(ROOT,'db.sql'),                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': rel('db.sql'),
     }
 }
 
@@ -31,10 +28,12 @@ SITE_ID = 1
 
 USE_I18N = True
 USE_L10N = True
-MEDIA_ROOT = os.path.join(ROOT, 'media/')
-ADMIN_MEDIA_ROOT = os.path.join(ROOT, 'media/admin/')
+MEDIA_ROOT = rel('media')
+
 MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/admin_media/'
+LOGIN_URL = '/enter/'
+LOGIN_REDIRECT_URL  = '/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '7jgijn%yvna&imys$j@8t4o!(+%smkixbl5$^45ds4k&mr(l^c'
@@ -49,16 +48,15 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.csrf.CsrfResponseMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'utube.urls'
+ROOT_URLCONF = 'YTupload.urls'
 
 TEMPLATE_DIRS = (
-    os.path.join(ROOT, 'templates'),
+    rel('templates')
 )
 
 INSTALLED_APPS = (
@@ -72,7 +70,12 @@ INSTALLED_APPS = (
 )
 
 # encode
-ENCODE_DIR_FROM = ''
-ENCODE_DIR_TO = ''
+ENCODE_DIR_FROM = rel('encode_from')
+ENCODE_DIR_TO = rel('encode_to')
 YT_LOGIN = ''
 YT_PASSWORD = ''
+
+try:
+    from local_settings import *
+except ImportError:
+    pass

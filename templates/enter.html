@@ -47,7 +47,7 @@ html, body {
 <tr><td>
     <form id="form-auth" action="" method="POST">{% csrf_token %}
     <table >
-    	{{ authform.as_table }}
+    	{{ form.as_table }}
     	<input type="hidden" name="formname" value="auth">
     </table>
     	<input type="submit" value="Вход">

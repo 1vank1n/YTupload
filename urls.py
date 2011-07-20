@@ -1,12 +1,12 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
+from django.conf import settings
 admin.autodiscover()
-import views, settings
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
-    (r'^$', views.index, {'template': 'index.html'}),
-    (r'^enter/$', views.enter, {'template': 'enter.html'}),
-    (r'^exit/$', views.exit),
+    url(r'^enter/$', 'django.contrib.auth.views.login', {'template_name': 'enter.html'}, name='login'),
+    url(r'^exit/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
+    (r'^', include('control.urls')),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),                     
 )
