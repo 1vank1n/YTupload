@@ -3,10 +3,18 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Log(models.Model):
+    NONE, QUEUED, CONVERTING, UPLOADING, UPLOADED = range(1,6)
+    STATUS_CHOICES = (
+           ("1", "None"),
+           ("2", "Queued"),
+           ("3", "Converting"),
+           ("4", "Uploading"),
+           ("5", "Uploaded"),
+    )
     filename = models.CharField(max_length=300)
     filesize = models.CharField(max_length=300)
     user = models.ForeignKey(User)
-    created = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
     uploaded = models.DateTimeField(null=True, blank=True)
     link = models.CharField(max_length=300, blank=True)
     playlist = models.CharField(max_length=300, blank=True)
@@ -14,7 +22,7 @@ class Log(models.Model):
     title = models.CharField(max_length=300)
     description = models.TextField()
     keywords = models.CharField(max_length=300)
-    status = models.CharField(max_length=300, blank=True)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=300, blank=True)
     
 class People(models.Model):
     login = models.OneToOneField(User, primary_key=True)

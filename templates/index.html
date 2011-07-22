@@ -39,7 +39,7 @@
             <tr>
                 <td>{{ l.filename }}</td>
                 <td>{{ l.filesize }}</td>
-                <td>{{ l.status }}</td>
+                <td>{{ l.get_status_display }}</td>
             </tr>
         {% endfor %}
         </table>
@@ -48,7 +48,7 @@
 	   <h1>1. Выберите файл:</h1>
 	   <p>Используйте в имени файла только латинские буквы, без пробелов и всяких там символов (+,-,%,',",^,&)!!!</p>
 	   {% for d in dictdir %}
-	   <li>{% if not d.status %}<a value="{{ d.filename }}" href="#">{% endif %}{{ d.filename }}</a> | <span>{{ d.filesize|filesizeformat }}</span></li>
+	   <li>{% if not d.status %}<a value="{{ d.filename }}" href="#">{% endif %}{{ d.filename }}{% if not d.status %}</a>{% endif %} | <span>{{ d.filesize|filesizeformat }}</span></li>
 	   {% endfor %}
 	</div>
 	<div style="height:10px;width:100%;clear:both;"></div>
