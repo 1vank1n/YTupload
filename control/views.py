@@ -5,34 +5,18 @@ from decorators import render_to
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from control.forms import LogForm
 from control.models import *
 
 @login_required
 @render_to('index.html')
 def index(request):
-    if request.method == 'POST':
-        filename = request.POST['filename']
-        filesize = request.POST['filesize']
-        title = request.POST['title']
-        description = request.POST['description']
-        keywords = request.POST['keywords']
-        # проверить не конвертируется ли ещё?
-        ## check if file not converted yet? 
-        if Log.objects.filter(filename=filename):
-            return HttpResponse('already in query')
-        else:
-            # записать в Log, поставить статус "в очереди"
-            ## write to Log that status of file "queued"
-            l = Log(
-                filename=filename, 
-                filesize=filesize, 
-                user=User.objects.filter(id=int(request.user.id))[0], 
-                title=title, 
-                description=description, 
-                keywords=keywords, 
-                status=Log.QUEUED)
-            l.save()
-            return redirect('index')
+    form = LogForm(request.POST or None)
+    if form.is_valid():
+        log = form.save(commit=False)
+        log.user = request.user
+        log.save()
+        return redirect('index')    
     # обычная загрузка страницы
     ## simple load page
     log_list = Log.objects.order_by('-id')[:10]
@@ -52,5 +36,6 @@ def index(request):
     ]
     return {
         'dictdir': file_list,
-        'loglist': log_list
+        'loglist': log_list,
+        'form': form
     }

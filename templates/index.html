@@ -10,8 +10,7 @@
             $('#choose_file a').click(function(e){
                 e.preventDefault();
                 $('#file_properties').fadeIn();
-                $('input[name="filename"]').attr('value', $(this).text());
-                $('input[name="filesize"]').attr('value', $(this).next('span').text());
+                $('input[name="filename"]').attr('value', $(this).text()).attr('readonly','');
             });
         });
 	</script>
@@ -52,18 +51,14 @@
 	   {% endfor %}
 	</div>
 	<div style="height:10px;width:100%;clear:both;"></div>
-	<div id="file_properties">
-	      <h1>2. Описание файла:</h1>
-	      <table>
-	      <form method="post" name="uploadform">{% csrf_token %}
-	      <tr><td>Файл:</td><td><input type="text" name="filename" readonly /> <input type="text" name="filesize" hidden></td></tr>
-	      <tr><td>Название:</td><td><input type="text" name="title" /></td></tr>
-	      <tr><td>Описание:</td><td><textarea name="description"></textarea></td></tr>
-	      <!-- <tr><td>Категория:</td><td><select></select></td></tr> -->
-	      <tr><td>Ключевые слова:</td><td><input type="text" name="keywords" /></td></tr>
-	      <tr><td></td><td><input type="submit" value="3. Загрузить на YouTube" /></td></tr>
-	      </table>
-	      </form>
+    <div id="file_properties"{% if not form.errors %} style="display:none"{% endif %}>
+        <h1>2. Описание файла:</h1>
+        <form method="post" name="uploadform">{% csrf_token %}
+        <table>
+            {{ form.as_table }}
+            <tr><td></td><td><input type="submit" value="3. Загрузить на YouTube" /></td></tr>
+        </table>
+        </form>
     </div>
 </body>
 </html>
