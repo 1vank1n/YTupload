@@ -36,6 +36,7 @@ LOGIN_URL = '/enter/'
 LOGIN_REDIRECT_URL  = '/'
 
 # Make this unique, and don't share it with anybody.
+YT_DEVKEY = 'AI39si4IHt6F6YS671on1wtociYyirG3Ys-IMpHhKqf_OqDrwHDFO751yTwAKBb14Bra7emz5jkkOc3tjM8KM-zRP7wEscg3ug'
 SECRET_KEY = '7jgijn%yvna&imys$j@8t4o!(+%smkixbl5$^45ds4k&mr(l^c'
 
 # List of callables that know how to import templates from various sources.
@@ -74,6 +75,8 @@ ENCODE_DIR_FROM = rel('encode_from')
 ENCODE_DIR_TO = rel('encode_to')
 YT_LOGIN = ''
 YT_PASSWORD = ''
+FFMPEG_AR = '22050' # ffmpeg audio sampling frequency => http://www.ffmpeg.org/ffmpeg.html#TOC9
+FFMPEG_VB = '1500kbits/s' # ffmpeg video bitrate => http://www.ffmpeg.org/ffmpeg.html#TOC7
 
 try:
     from local_settings import *

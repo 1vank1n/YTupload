@@ -38,7 +38,7 @@
             <tr>
                 <td>{{ l.filename }}</td>
                 <td>{{ l.filesize }}</td>
-                <td>{{ l.get_status_display }}</td>
+                <td>{% if l.status = '5' %}Uploaded <a href="{{ l.link }}">[link]</a>{% else %}{{ l.get_status_display }}{% endif %}</td>
             </tr>
         {% endfor %}
         </table>
