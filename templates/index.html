@@ -2,63 +2,124 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>YouTube Uploader | sibinformburo (c) 2011 | ivank.in</title>
+	<title>YouTube Uploader</title>
 	
 	<script type="text/javascript" src="{{ MEDIA_URL }}jquery-1.6.1.min.js"></script>
+	
+	<!-- Bootstrap -->
+	<link rel="stylesheet/less" type="text/css" href="{{ MEDIA_URL }}bootstrap/lib/bootstrap.less">
+    <script src="{{ MEDIA_URL }}bootstrap/js/bootstrap-modal.js" type="text/javascript"></script>
+    <script src="{{ MEDIA_URL }}less-1.1.3.min.js" type="text/javascript"></script>
+    
 	<script type="text/javascript">
         $(function(){
+            $('.cancel').click(function(){ $('#modal-from-dom').modal('hide'); });
             $('#choose_file a').click(function(e){
                 e.preventDefault();
-                $('#file_properties').fadeIn();
                 $('input[name="filename"]').attr('value', $(this).text()).attr('readonly','');
             });
+            {% if form.errors %} 
+            $('#modal-from-dom').modal('show');
+            var emptyfields = $("form *[value=]:enabled");
+            if (emptyfields.size() > 0) {
+                emptyfields.each(function() {
+                    $(this).parent('div').parent('.clearfix').addClass("error");
+                });
+            }
+            {% endif %}
         });
 	</script>
 	<style type="text/css">
-	   body {width:1000px;margin:0 auto;position: relative;font-size:11pt;}
-	   #file_properties {display: none;}
-	   #choose_file {width: 490px; float: left; height: 500px; overflow-y: auto;}
-	   #loglist, #loglist table {width: 500px; float:right;}
-	   #loglist td {border: 1px solid #555;margin: 0;padding: 5px;}
-	   #exit {display: block; position: absolute; top:0; right:0; padding: 10px; background: #ddf; color: #000; text-decoration: none;}
-	   input, textarea, button {border: 1px solid #ccc; padding:5px;}
+	   .exit {font-size:13px;line-height:18px;padding-left:10px;}
+	   .top {margin-top:-3px;}
 	</style>
 </head>
 <body>
-    <a id="exit" href="{% url logout %}">Выход</a>
-    <div id="loglist">
-        <h1>Отчёт</h1>
-        <table cellpadding="0" cellspacing="0">
-            <tr>
-                <td>Имя файла</td>
-                <td>Размер</td>
-                <td>Статус</td>
-            </tr>
-        {% for l in loglist %}
-            <tr>
-                <td>{{ l.filename }}</td>
-                <td>{{ l.filesize }}</td>
-                <td>{% if l.status = '5' %}Uploaded <a href="{{ l.link }}">[link]</a>{% else %}{{ l.get_status_display }}{% endif %}</td>
-            </tr>
-        {% endfor %}
-        </table>
+<div class="container">
+    <div class="row">
+        <div class="span14 offset1">
+            <div class="alert-message info top">
+                <strong>YTupload</strong>
+                <span style="float:right;">
+                    {{ user.first_name }} {{ user.last_name }} [ {{ user.username }} ]
+                    <a class="close exit" href="{% url logout %}">Выход</a> 
+                </span>
+            </div>
+        </div>
     </div>
-    <div id="choose_file">
-	   <h1>1. Выберите файл:</h1>
-	   <p>Используйте в имени файла только латинские буквы, без пробелов и всяких там символов (+,-,%,',",^,&)!!!</p>
-	   {% for d in dictdir %}
-	   <li>{% if not d.status %}<a value="{{ d.filename }}" href="#">{% endif %}{{ d.filename }}{% if not d.status %}</a>{% endif %} | <span>{{ d.filesize|filesizeformat }}</span></li>
-	   {% endfor %}
-	</div>
-	<div style="height:10px;width:100%;clear:both;"></div>
-    <div id="file_properties"{% if not form.errors %} style="display:none"{% endif %}>
-        <h1>2. Описание файла:</h1>
+    
+    <div class="row">
+        <div class="span8">
+            <h3>Выберите файл:</h3>
+            <div class="alert-message">Используйте в имени файла только латинские буквы, без пробелов и всяких там символов (+,-,%,',",^,&)!!!</div>
+            <div id="choose_file">
+            {% for d in dictdir %}
+	           <li>{% if not d.status %}<a value="{{ d.filename }}" href="#" data-keyboard="true" data-backdrop="true" data-controls-modal="modal-from-dom">{% endif %}{{ d.filename }}{% if not d.status %}</a>{% endif %} | <span>{{ d.filesize|filesizeformat }}</span></li>
+            {% endfor %}
+            </div>
+        </div>
+    
+        <div class="span8">
+            <h3>Лог <small>(последние 10 записей)</small> :</h3>
+            <table cellpadding="0" cellspacing="0">
+                <thead>
+                    <th>Имя файла</th>
+                    <th>Размер</th>
+                    <th>Статус</th>
+                </thead>
+                <tbody>
+                {% for l in loglist %}
+                    <tr>
+                        <td>{{ l.filename }}</td>
+                        <td>{{ l.filesize }}</td>
+                        <td>{% if l.status = '5' %}Uploaded <a href="{{ l.link }}">[link]</a>{% else %}{{ l.get_status_display }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="modal hide fade" id="modal-from-dom">
         <form method="post" name="uploadform">{% csrf_token %}
-        <table>
-            {{ form.as_table }}
-            <tr><td></td><td><input type="submit" value="3. Загрузить на YouTube" /></td></tr>
-        </table>
+        <div class="modal-header">
+            <a class="close" href="#">×</a>
+            <h3>Опишите файл</h3>
+        </div>
+        <div class="modal-body">
+            <div class="clearfix">
+                <label>Имя файла:</label>
+                <div class="input">
+                    <input type="text" name="filename" value="{% if form.filename.data %}{{ form.filename.data }}{% endif %}"></input>
+                    <span class="help-inline">Выбранный файл</span>
+                </div>
+            </div>
+            <div class="clearfix">
+                <label>Название ролика:</label>
+                <div class="input">
+                    <input class="span6" type="text" name="title" value="{% if form.filename.data %}{{ form.title.data }}{% endif %}"></input>
+                </div>
+            </div>
+            <div class="clearfix">
+                <label>Описание ролика:</label>
+                <div class="input">
+                    <textarea class="span6" type="text" name="description" value="{% if form.filename.data %}{{ form.description.data }}{% endif %}">{% if form.filename.data %}{{ form.description.data }}{% endif %}</textarea>
+                </div>
+            </div>
+            <div class="clearfix">
+                <label>Теги:</label>
+                <div class="input">
+                    <input class="span6" type="text" name="keywords" value="{% if form.filename.data %}{{ form.keywords.data }}{% endif %}"></input>
+                    <span class="help-inline">Напшите ключевые слова через запятую</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input type="submit" class="btn primary upload" value="Загрузить"></input>
+            <a class="btn secondary cancel" href="#">Отмена</a>
+        </div>
         </form>
     </div>
+</div>
 </body>
 </html>
