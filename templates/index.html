@@ -40,9 +40,9 @@
         <div class="span14 offset1">
             <div class="alert-message info top">
                 <strong>YTupload</strong>
+                <a class="close exit" href="{% url logout %}">Выход</a>
                 <span style="float:right;">
-                    {{ user.first_name }} {{ user.last_name }} [ {{ user.username }} ]
-                    <a class="close exit" href="{% url logout %}">Выход</a> 
+                    {{ user.first_name }} {{ user.last_name }} [ {{ user.username }} ] 
                 </span>
             </div>
         </div>
