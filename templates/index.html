@@ -72,7 +72,7 @@
                     <tr>
                         <td>{{ l.filename }}</td>
                         <td>{{ l.filesize }}</td>
-                        <td>{% if l.status = '5' %}Uploaded <a href="{{ l.link }}">[link]</a>{% else %}{{ l.get_status_display }}{% endif %}</td>
+                        <td>{% if l.status = '6' %}Uploaded <a href="{{ l.link }}">[link]</a>{% else %}{{ l.get_status_display }}{% endif %}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -104,6 +104,16 @@
                 <label>Описание ролика:</label>
                 <div class="input">
                     <textarea class="span6" type="text" name="description" value="{% if form.filename.data %}{{ form.description.data }}{% endif %}">{% if form.filename.data %}{{ form.description.data }}{% endif %}</textarea>
+                </div>
+            </div>
+            <div class="clearfix">
+                <label>Плейлист:</label>
+                <div class="input">
+                    <select id="playlist" name="playlist">
+                    {% for p in playlist %}
+                        <option value="{{ p.playlist_uri }}">{{ p.title }}</option>
+                    {% endfor %}
+                    </select>
                 </div>
             </div>
             <div class="clearfix">

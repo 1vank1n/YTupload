@@ -73,6 +73,7 @@ INSTALLED_APPS = (
 # YTupload settings
 ENCODE_DIR_FROM = rel('encode_from')
 ENCODE_DIR_TO = rel('encode_to')
+YT_CHANNEL = ''
 YT_LOGIN = ''
 YT_PASSWORD = ''
 FFMPEG_AR = '22050' # ffmpeg audio sampling frequency => http://www.ffmpeg.org/ffmpeg.html#TOC9

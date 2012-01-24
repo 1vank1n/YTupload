@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, datetime
+import os, datetime, feedparser
 from django.conf import settings
 from decorators import render_to
 from django.shortcuts import redirect
@@ -7,6 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from control.forms import LogForm
 from control.models import *
+
+def show_playlist():
+    playlist = []
+    for a in feedparser.parse('http://gdata.youtube.com/feeds/api/users/TyumenTime/playlists').items()[9][1]:
+        playlist.append[{'title': a['title']}]
+    return playlist
 
 @login_required
 @render_to('index.html')
