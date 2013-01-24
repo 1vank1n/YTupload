@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import settings, os, datetime
+import os, datetime, subprocess
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+from django.conf import settings
 from control.models import *
 
 # если уже, что-то конвертится - выходим
@@ -17,24 +18,39 @@ else:
         file = log_list[0]
         file.status = Log.CONVERTING
         file.save()
-        # переназываем файл
-        # rename file
-        basename, extension = os.path.splitext(file.filename)
-        newfilename = basename + '.flv'
-        # запускаем конвертирование
-        # start converting
-        os.system('nice -n 20 ffmpeg -i ' + os.path.join(settings.ENCODE_DIR_FROM, file.filename) + \
-                  ' -ar ' + settings.FFMPEG_AR + \
-                  ' -vb ' + settings.FFMPEG_VB + \
-                  ' ' + os.path.join(settings.ENCODE_DIR_TO, newfilename))
-        file.status = Log.READYUPLOAD
-        file.save()
+        
+        if file.convert:
+            # переназываем файл
+            # rename file
+            basename, extension = os.path.splitext(file.filename)
+            newfilename = basename + '.flv'
+            audiofilename = os.path.join(settings.ENCODE_DIR_TO, 'audio.wav')
+            # запускаем конвертирование
+            # start converting
+            # 1. split audio
+            subprocess.call(['nice', '-n', '20', 'ffmpeg', '-y', '-i', os.path.join(settings.ENCODE_DIR_FROM, file.filename), '-acodec', 'pcm_s16le', audiofilename])
+            # 2. normalize audio
+            subprocess.call(['normalize-audio', audiofilename])
+            # 3. merge video and audio
+            subprocess.call(['nice', '-n', '20', 'ffmpeg', '-y', '-i', 
+                             os.path.join(settings.ENCODE_DIR_FROM, file.filename),
+                             '-i', audiofilename, '-map', '0:0', '-map', '1:0',
+                             '-ar', settings.FFMPEG_AR, '-vb', settings.FFMPEG_VB,
+                             os.path.join(settings.ENCODE_DIR_TO, newfilename) ])
+
+            file.status = Log.READYUPLOAD
+            file.save()
+        else:
+            file.status = Log.READYUPLOAD
+            file.save()
+                
     
 if Log.objects.filter(status=Log.UPLOADING):
     quit()
 else:
     # находим первый файл в очереди на загрузку
     # find first file in queue to upload
+    print '#### start uploading ####'
     log_list = Log.objects.filter(status=Log.READYUPLOAD)
     if log_list:
         file = log_list[0]
@@ -74,7 +90,11 @@ else:
         video_entry = gdata.youtube.YouTubeVideoEntry(media=my_media_group)
         
         # set the path for the video file binary
-        video_file_location = os.path.join(settings.ENCODE_DIR_TO, newfilename).encode("utf-8")
+        
+        if file.convert:
+            video_file_location = os.path.join(settings.ENCODE_DIR_TO, newfilename).encode("utf-8")
+        else:
+            video_file_location = os.path.join(settings.ENCODE_DIR_FROM, file.filename).encode("utf-8")
         new_entry = yt_service.InsertVideoEntry(video_entry, video_file_location)
         
         # add to playlist
